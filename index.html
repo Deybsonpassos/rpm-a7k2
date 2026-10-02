@@ -298,7 +298,7 @@ function tokens(q){
 function render(){
   const L=$('list'), termos=busca?tokens(busca):[];
   let out=[], n=0;
-  const todos=DADOS.concat(state.extra.map(x=>[x.id,x.nome,x.cpf||'','','','avulso',x.tel?0:1]));
+  const todos=DADOS.concat(state.extra.map(x=>[x.id,x.nome,x.cpf||'',x.lgnd||'','','avulso',x.tel?0:1]));
   for(const r of todos){
     const on=!!state.pres[r[N]];
     if(on) n++;
@@ -342,7 +342,7 @@ function achar(id){
   id=Number(id);
   if(DADOS[id]&&DADOS[id][N]===id) return DADOS[id];
   const e=state.extra.find(x=>x.id===id);
-  return [e.id,e.nome,e.cpf||'','','','avulso',e.tel?0:1];
+  return [e.id,e.nome,e.cpf||'',e.lgnd||'','','avulso',e.tel?0:1];
 }
 function toggle(id){
   const r=achar(id);
@@ -351,7 +351,7 @@ function toggle(id){
       'Remover','Manter',()=>{delete state.pres[id];salvar();render();toast('Presença removida')});
     return;
   }
-  if(faltam(r).length){ completar(id,r); return; }
+  if(r[TOP]!=='avulso' && faltam(r).length){ completar(id,r); return; }
   marcar(id);
 }
 function marcar(id,dados){
@@ -395,6 +395,7 @@ function abrirNovo(pre){
   $('sheet').innerHTML='<h2>Visitante</h2><p>Para quem não está na relação da matriz.</p>'+
     '<input id="s-nm" placeholder="Nome completo" value="'+esc(d?'':(pre||''))+'">'+
     '<input id="s-cp" type="tel" inputmode="numeric" placeholder="CPF" value="'+esc(d?pre:'')+'">'+
+    '<input id="s-lg" type="tel" inputmode="numeric" placeholder="Número LGND">'+
     '<input id="s-tl" type="tel" inputmode="numeric" placeholder="Celular com DDD">'+
     '<div class="acts"><button class="sec" id="s-c">Cancelar</button>'+
     '<button class="pri" id="s-a">Adicionar e marcar</button></div>';
@@ -403,7 +404,8 @@ function abrirNovo(pre){
   $('s-a').onclick=()=>{
     const nm=$('s-nm').value.trim(); if(!nm){toast('Escreva o nome');return}
     const id=900000+state.extra.length;
-    state.extra.push({id,nome:nm,cpf:$('s-cp').value.replace(/\D/g,''),tel:$('s-tl').value.replace(/\D/g,'')});
+    state.extra.push({id,nome:nm,cpf:$('s-cp').value.replace(/\D/g,''),
+                      lgnd:$('s-lg').value.replace(/\D/g,''),tel:$('s-tl').value.replace(/\D/g,'')});
     fechar(); $('q').value=''; busca=''; marcar(id);
   };
 }
