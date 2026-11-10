@@ -1,4 +1,4 @@
-const CACHE = 'chamada-doc-v4';
+const CACHE = 'chamada-doc-v5';
 const ARQUIVOS = ['./', './index.html', './manifest.json',
                   './icone-192.png', './icone-512.png'];
 
