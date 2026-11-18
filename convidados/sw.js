@@ -1,4 +1,4 @@
-const CACHE = 'chamada-conv-v5';
+const CACHE = 'chamada-conv-v8';
 // Todos os apps publicados em deybsonpassos.github.io dividem a MESMA origem.
 // O cache tambem e por origem, entao apagar "todo cache que nao e o meu"
 // destruiria o modo offline do app dos legendarios. Cada app apaga apenas

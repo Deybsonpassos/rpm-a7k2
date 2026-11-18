@@ -219,7 +219,7 @@ const DADOS = [];
 const N=0,NOME=1,CPF=2,LGND=3,FAM=4,TOP=5,FALTA=6;
 const F_TEL=1,F_LGND=2,F_FAM=4;
 
-const LISTA_EM='';
+const LISTA_EM='18/11/2026 19:57';
 let state={op:'',ev:'',pres:{},extra:[]};
 let filtro='all', busca='', memOnly=false;
 
@@ -252,7 +252,8 @@ try{ localStorage.setItem('__t','1'); localStorage.removeItem('__t'); }catch(e){
 // Entao o app diz, na cara, de quando e a lista que ele tem.
 (function(){
   const l=document.getElementById('g-lista'), v=document.getElementById('g-vazio');
-  if(l) l.textContent = LISTA_EM ? ('Lista gerada em ' + LISTA_EM) : '';
+  // carimbo so faz sentido quando ha lista; com lista vazia quem fala e o aviso
+  if(l) l.textContent = (LISTA_EM && DADOS.length) ? ('Lista gerada em ' + LISTA_EM) : '';
   if(v && !DADOS.length){
     v.style.display='block';
     v.innerHTML='<b>Este aparelho está com a LISTA VAZIA</b>'+
