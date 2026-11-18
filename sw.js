@@ -1,4 +1,9 @@
 const CACHE = 'chamada-doc-v9';
+// Todos os apps publicados em deybsonpassos.github.io dividem a MESMA origem,
+// e o cache tambem e por origem. Apagar "todo cache que nao e o meu" apagaria
+// o modo offline do app de convidados - e ele faria o mesmo com este.
+// Cada app apaga apenas os caches do proprio prefixo.
+const PREFIXO = 'chamada-doc-';
 const ARQUIVOS = ['./', './index.html', './manifest.json',
                   './icone-192.png', './icone-512.png'];
 
@@ -10,7 +15,9 @@ self.addEventListener('install', e => {
 
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys()
-    .then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k))))
+    .then(ks => Promise.all(ks
+      .filter(k => k.indexOf(PREFIXO) === 0 && k !== CACHE)
+      .map(k => caches.delete(k))))
     .then(() => self.clients.claim()));
 });
 
