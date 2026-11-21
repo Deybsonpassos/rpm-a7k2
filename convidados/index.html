@@ -348,7 +348,7 @@ function render(){
   // numero so refletia quem caia nas primeiras 250, e visitante nenhum,
   // porque visitante entra no fim da lista.
   const n=Object.keys(state.pres).length;
-  const todos=DADOS.concat(state.extra.map(x=>[x.id,x.nome,x.cpf||'',x.lgnd||'','','avulso',x.tel?0:1]));
+  const todos=DADOS.concat(state.extra.map(x=>[x.id,x.nome,x.cpf||'',x.lgnd||'','','avulso',0]));
   for(const r of todos){
     const on=!!state.pres[r[N]];
     if(filtro==='on'&&!on) continue;
@@ -389,7 +389,7 @@ function achar(id){
   id=Number(id);
   if(DADOS[id]&&DADOS[id][N]===id) return DADOS[id];
   const e=state.extra.find(x=>x.id===id);
-  return [e.id,e.nome,e.cpf||'',e.lgnd||'','','avulso',e.tel?0:1];
+  return [e.id,e.nome,e.cpf||'',e.lgnd||'','','avulso',0];
 }
 function toggle(id){
   const r=achar(id);
@@ -439,35 +439,21 @@ function completar(id,r){
 
 function abrirNovo(pre){
   const d=/^\d/.test(pre||'');
-  $('sheet').innerHTML='<h2>Fora da lista</h2><p>Para quem não está na relação de convidados.</p>'+
+  $('sheet').innerHTML='<h2>Fora da lista</h2><p>Nome basta. O CPF ajuda a conferir depois, mas não é obrigatório.</p>'+
     '<input id="s-nm" placeholder="Nome completo" value="'+esc(d?'':(pre||''))+'">'+
     '<input id="s-cp" type="tel" inputmode="numeric" placeholder="CPF" value="'+esc(d?pre:'')+'">'+
-    '<input id="s-tl" type="tel" inputmode="numeric" placeholder="Celular com DDD">'+
     '<div class="acts"><button class="sec" id="s-c">Cancelar</button>'+
     '<button class="pri" id="s-a">Adicionar e marcar</button></div>';
   abrir(); setTimeout(()=>$('s-nm').focus(),120);
   $('s-c').onclick=fechar;
-  let semCpf=false;
-  $('s-a').onclick=()=>{
+    $('s-a').onclick=()=>{
     const nm=$('s-nm').value.trim(); if(!nm){toast('Escreva o nome');return}
     const cp=$('s-cp').value.replace(/\D/g,'');
-    // O CPF e a chave que identifica o irmao na matriz. Sem ele, o mesmo
-    // visitante cadastrado por dois operadores entra duas vezes. Nao bloqueia
-    // a chamada - avisa e pede um segundo toque.
-    if(cp.length!==11 && !semCpf){
-      semCpf=true;
-      $('s-a').textContent='Cadastrar sem CPF';
-      let w=document.getElementById('s-wn');
-      if(!w){ w=document.createElement('p'); w.id='s-wn'; w.className='s-wn';
-        $('s-a').parentNode.parentNode.insertBefore(w,$('s-a').parentNode); }
-      w.textContent = cp.length
-        ? 'CPF incompleto. E o CPF que identifica o convidado: sem ele certo, ele pode entrar duplicado na lista. Toque de novo para seguir assim.'
-        : 'Sem CPF o convidado pode entrar duplicado na lista, porque e o CPF que identifica. Toque de novo para seguir assim.';
-      return;
-    }
+    // Conferencia de portao: NADA bloqueia o cadastro. O nome basta e entra
+    // num toque. O CPF ajuda a nao duplicar depois, mas nunca segura a fila.
     const id=900000+state.extra.length;
     state.extra.push({id,nome:nm,cpf:cp,lgnd:'',
-                      tel:$('s-tl').value.replace(/\D/g,'')});
+                      tel:''});
     fechar(); $('q').value=''; busca=''; marcar(id);
   };
 }
